@@ -1,0 +1,14 @@
+{
+  "default": {
+    "completion_rate": 0.95,
+    "decision_accuracy": 0.85,
+    "unsafe_approvals_max": 0,
+    "citation_recall": 0.8
+  },
+  "policy-rules": {
+    "completion_rate": 1.0,
+    "decision_accuracy": 1.0,
+    "unsafe_approvals_max": 0,
+    "citation_recall": 1.0
+  }
+}

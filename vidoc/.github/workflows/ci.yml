@@ -1,0 +1,43 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e '.[dev]'
+      - run: pytest -q
+      - run: python -m vidoc.evals.retrieval
+      # Agent -> MCP -> ledger loop with the rules baseline: catches tool and harness regressions.
+      - run: python -m vidoc.evals.agent --model rules
+      # Serving path (client, structured output, benchmark) against a stand-in for vLLM.
+      - name: serving smoke test
+        run: |
+          python -m vidoc.synth --n 40 --out data/synth
+          uvicorn scripts.fake_vlm_server:app --port 8001 &
+          sleep 3
+          python serving/benchmark.py --n 20 --concurrency 1 4 --model fake
+
+  eval-agent-llm:
+    runs-on: ubuntu-latest
+    needs: test
+    if: ${{ vars.LLM_MODEL != '' }}
+    env:
+      LLM_MODEL: ${{ vars.LLM_MODEL }}
+      LLM_BASE_URL: ${{ vars.LLM_BASE_URL }}
+      LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - run: pip install -e .
+      - run: python -m vidoc.evals.agent --model env
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with: { name: agent-eval, path: reports/ }

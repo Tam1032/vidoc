@@ -1,0 +1,20 @@
+{"claim_id": "C0001", "decision": "approve", "policy_refs": ["expense_policy#2.1", "expense_policy#4.2"]}
+{"claim_id": "C0002", "decision": "escalate", "policy_refs": ["expense_policy#2.1"]}
+{"claim_id": "C0003", "decision": "escalate", "policy_refs": ["expense_policy#2.1"]}
+{"claim_id": "C0004", "decision": "reject", "policy_refs": ["expense_policy#2.1"]}
+{"claim_id": "C0005", "decision": "reject", "policy_refs": ["expense_policy#1.1"]}
+{"claim_id": "C0006", "decision": "approve", "policy_refs": ["expense_policy#1.2", "expense_policy#2.3", "expense_policy#4.2"]}
+{"claim_id": "C0007", "decision": "reject", "policy_refs": ["expense_policy#1.2"]}
+{"claim_id": "C0008", "decision": "escalate", "policy_refs": ["expense_policy#2.3"]}
+{"claim_id": "C0009", "decision": "approve", "policy_refs": ["expense_policy#2.3", "expense_policy#4.2"]}
+{"claim_id": "C0010", "decision": "approve", "policy_refs": ["expense_policy#2.4", "expense_policy#4.2"]}
+{"claim_id": "C0011", "decision": "escalate", "policy_refs": ["expense_policy#2.4"]}
+{"claim_id": "C0012", "decision": "approve", "policy_refs": ["expense_policy#2.5", "expense_policy#4.2"]}
+{"claim_id": "C0013", "decision": "reject", "policy_refs": ["expense_policy#2.6"]}
+{"claim_id": "C0014", "decision": "escalate", "policy_refs": ["expense_policy#2.6"]}
+{"claim_id": "C0015", "decision": "reject", "policy_refs": ["expense_policy#3.2"]}
+{"claim_id": "C0016", "decision": "escalate", "policy_refs": ["expense_policy#1.4"]}
+{"claim_id": "C0017", "decision": "escalate", "policy_refs": ["expense_policy#3.1"]}
+{"claim_id": "C0018", "decision": "escalate", "policy_refs": ["expense_policy#3.3"]}
+{"claim_id": "C0019", "decision": "escalate", "policy_refs": ["expense_policy#1.3"]}
+{"claim_id": "C0020", "decision": "reject", "policy_refs": ["expense_policy#1.1"]}

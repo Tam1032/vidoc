@@ -1,0 +1,24 @@
+# API + MCP server. The model server is in serving/docker-compose.vllm.yml (needs a GPU);
+# without it, extraction falls back to ground-truth fields and the agent to the rules baseline.
+services:
+  api:
+    build: .
+    environment:
+      VLM_MODEL: ${VLM_MODEL:-}
+      VLM_BASE_URL: ${VLM_BASE_URL:-http://host.docker.internal:8001/v1}
+      LLM_MODEL: ${LLM_MODEL:-}
+      LLM_BASE_URL: ${LLM_BASE_URL:-}
+      LLM_API_KEY: ${LLM_API_KEY:-}
+      EMBED_MODEL: ${EMBED_MODEL:-}
+      EMBED_BASE_URL: ${EMBED_BASE_URL:-}
+    ports: ["8400:8400"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
+
+  mcp:
+    build: .
+    command: python -m vidoc.mcp_server --http 8300
+    environment:
+      VLM_MODEL: ${VLM_MODEL:-}
+      VLM_BASE_URL: ${VLM_BASE_URL:-http://host.docker.internal:8001/v1}
+    ports: ["8300:8300"]
+    extra_hosts: ["host.docker.internal:host-gateway"]
