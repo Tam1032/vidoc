@@ -21,10 +21,10 @@ from PIL import Image, ImageDraw, ImageFilter, ImageFont
 
 from vidoc.schema import Invoice, LineItem
 
-FONT_DIRS = ["/usr/share/fonts/truetype/dejavu", "/usr/share/fonts/truetype/liberation",
+# Only fonts with full Vietnamese coverage. Liberation 1.x (Ubuntu's fonts-liberation) lacks ơ, ư, ạ, ồ...
+FONT_DIRS = ["/usr/share/fonts/truetype/dejavu",
              "/System/Library/Fonts/Supplemental", "C:/Windows/Fonts"]
-FONT_NAMES = ["DejaVuSans.ttf", "DejaVuSerif.ttf", "LiberationSans-Regular.ttf", "LiberationSerif-Regular.ttf",
-              "Arial.ttf", "Times New Roman.ttf"]
+FONT_NAMES = ["DejaVuSans.ttf", "DejaVuSerif.ttf", "Arial.ttf", "Times New Roman.ttf"]
 
 SELLERS = [
     ("CÔNG TY TNHH NHÀ HÀNG BẾP VIỆT", "meals"), ("CÔNG TY CP DỊCH VỤ ẨM THỰC SÀI GÒN XANH", "meals"),
@@ -128,7 +128,7 @@ def make_invoice(rng: random.Random, kind: str | None = None, category: str | No
 
 
 def _font(rng: random.Random, size: int, bold: bool = False) -> ImageFont.FreeTypeFont:
-    names = (["DejaVuSans-Bold.ttf", "DejaVuSerif-Bold.ttf", "LiberationSans-Bold.ttf"] if bold else []) + FONT_NAMES
+    names = (["DejaVuSans-Bold.ttf", "DejaVuSerif-Bold.ttf"] if bold else []) + FONT_NAMES
     rng_names = names[:]
     rng.shuffle(rng_names)
     for name in (names[:1] if bold else []) + rng_names:
@@ -136,7 +136,9 @@ def _font(rng: random.Random, size: int, bold: bool = False) -> ImageFont.FreeTy
             p = Path(d) / name
             if p.exists():
                 return ImageFont.truetype(str(p), size)
-    return ImageFont.load_default(size)
+    # PIL's built-in font has no Vietnamese glyphs; training on boxes instead of diacritics is useless.
+    raise RuntimeError("no TrueType font with Vietnamese glyphs found; on Ubuntu run "
+                       "`sudo apt install fonts-dejavu-core` (looked in " + ", ".join(FONT_DIRS) + ")")
 
 
 def render(inv: Invoice, rng: random.Random) -> Image.Image:
