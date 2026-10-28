@@ -17,7 +17,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = ["pytest>=8"]
-train = ["torch>=2.4", "transformers>=4.49", "peft>=0.13", "accelerate>=1.0", "bitsandbytes>=0.44", "mlflow>=2.16"]
+train = ["torch>=2.4", "torchvision", "transformers>=4.49", "peft>=0.13", "accelerate>=1.0", "bitsandbytes>=0.44", "mlflow>=2.16"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

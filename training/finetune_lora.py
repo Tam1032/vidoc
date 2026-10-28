@@ -13,6 +13,7 @@ Needs a CUDA GPU and `pip install -e '.[train]'`. Not run in CI.
 
 import argparse
 import json
+import math
 from pathlib import Path
 
 import torch
@@ -108,9 +109,11 @@ def main() -> None:
                                              target_modules=LM_TARGETS, task_type="CAUSAL_LM"))
     model.print_trainable_parameters()
 
+    # Integer warmup steps work on transformers 4.x and 5.x (5.x dropped warmup_ratio).
+    steps = math.ceil(len(train) / (a.batch * a.grad_accum) * a.epochs)
     args = TrainingArguments(
         output_dir=a.out, num_train_epochs=a.epochs, learning_rate=a.lr, lr_scheduler_type="cosine",
-        warmup_ratio=0.03, per_device_train_batch_size=a.batch, per_device_eval_batch_size=a.batch,
+        warmup_steps=max(1, round(0.03 * steps)), per_device_train_batch_size=a.batch, per_device_eval_batch_size=a.batch,
         gradient_accumulation_steps=a.grad_accum, gradient_checkpointing=True,
         gradient_checkpointing_kwargs={"use_reentrant": False}, bf16=True, logging_steps=10,
         eval_strategy="steps", eval_steps=a.save_steps, save_strategy="steps", save_steps=a.save_steps, save_total_limit=2,

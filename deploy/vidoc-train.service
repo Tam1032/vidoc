@@ -1,0 +1,16 @@
+# Resume ViDoc training after a reboot. Install:
+#   sudo cp deploy/vidoc-train.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable vidoc-train
+# Disable once training is done: sudo systemctl disable vidoc-train
+[Unit]
+Description=Resume ViDoc LoRA training after boot
+After=network-online.target nvidia-persistenced.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/home/anda/projects/vidoc/scripts/train_on_boot.sh
+
+[Install]
+WantedBy=multi-user.target
