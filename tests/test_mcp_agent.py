@@ -11,7 +11,8 @@ def say(*c):
 async def test_server_refuses_unsafe_approvals(mcp, store):
     r = await mcp.call_tool("approve_expense", {"claim_id": "C0001", "policy_refs": ["expense_policy#4.2"]})
     assert r.is_error and "extract_invoice" in r.content[0].text
-    for cid, why in [("C0015", "already paid"), ("C0016", "problems"), ("C0018", "above the invoice total")]:
+    for cid, why in [("C0015", "already paid"), ("C0016", "problems"), ("C0018", "above the invoice total"),
+                     ("C0017", "days after the invoice date"), ("C0014", "equipment is never auto-approved")]:
         await mcp.call_tool("extract_invoice", {"claim_id": cid})
         r = await mcp.call_tool("approve_expense", {"claim_id": cid, "policy_refs": ["expense_policy#4.2"]})
         assert r.is_error and why in r.content[0].text, cid

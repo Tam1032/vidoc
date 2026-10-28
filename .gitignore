@@ -6,3 +6,5 @@ runs/
 reports/*
 !reports/.gitkeep
 mlruns/
+.env
+data/real/images/

@@ -28,7 +28,7 @@ class Chunk:
 
 def split_markdown(path: Path) -> list[Chunk]:
     chunks, title, buf = [], None, []
-    for line in path.read_text().splitlines():
+    for line in path.read_text(encoding="utf-8").splitlines():
         if line.startswith("### "):
             if title:
                 chunks.append((title, buf))
@@ -112,7 +112,7 @@ def openai_embedder(model: str | None = None, base_url: str | None = None, api_k
         return None
     from openai import OpenAI
 
-    client = OpenAI(base_url=base_url or os.getenv("EMBED_BASE_URL"),
+    client = OpenAI(base_url=base_url or os.getenv("EMBED_BASE_URL") or None,
                     api_key=api_key or os.getenv("EMBED_API_KEY") or os.getenv("OPENAI_API_KEY") or "x")
 
     def embed(texts: list[str]) -> list[list[float]]:

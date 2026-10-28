@@ -19,8 +19,8 @@ class ClaimStore:
 
     @classmethod
     def load(cls, path: Path = CLAIMS_DIR) -> "ClaimStore":
-        claims = {c["claim_id"]: c for c in (json.loads(l) for l in (path / "claims.jsonl").read_text().splitlines() if l)}
-        ledger = json.loads((path / "ledger_seed.json").read_text())
+        claims = {c["claim_id"]: c for c in (json.loads(l) for l in (path / "claims.jsonl").read_text(encoding="utf-8").splitlines() if l)}
+        ledger = json.loads((path / "ledger_seed.json").read_text(encoding="utf-8"))
         return cls(copy.deepcopy(claims), copy.deepcopy(ledger))
 
     def image_path(self, claim_id: str) -> Path:

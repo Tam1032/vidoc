@@ -11,7 +11,7 @@ from vidoc.rag import Retriever
 
 
 async def test_rules_baseline_full_eval():
-    cases = [json.loads(l) for l in (ROOT / "evals" / "claims_golden.jsonl").read_text().splitlines() if l]
+    cases = [json.loads(l) for l in (ROOT / "evals" / "claims_golden.jsonl").read_text(encoding="utf-8").splitlines() if l]
     retriever = Retriever.from_dir()
     rows = [await run_case(PolicyRules(), c, oracle_reader, retriever) for c in cases]
     s = summarize(rows)

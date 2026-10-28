@@ -26,7 +26,7 @@ def evaluate(retriever: Retriever, rows: list[dict], mode: str, ks=(1, 3, 5)) ->
 
 
 def main() -> None:
-    rows = [json.loads(line) for line in GOLDEN.read_text().splitlines() if line]
+    rows = [json.loads(line) for line in GOLDEN.read_text(encoding="utf-8").splitlines() if line]
     embedder = openai_embedder()
     retriever = Retriever.from_dir(embedder=embedder)
     modes = ["bm25"] + (["dense", "hybrid"] if embedder else [])

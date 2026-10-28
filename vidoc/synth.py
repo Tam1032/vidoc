@@ -235,7 +235,7 @@ def generate(n: int, out: Path, seed: int = 0, splits=(0.8, 0.1, 0.1)) -> None:
     rng = random.Random(seed)
     out.mkdir(parents=True, exist_ok=True)
     (out / "images").mkdir(exist_ok=True)
-    files = {s: (out / f"{s}.jsonl").open("w") for s in ("train", "val", "test")}
+    files = {s: (out / f"{s}.jsonl").open("w", encoding="utf-8") for s in ("train", "val", "test")}
     for i in range(n):
         inv = make_invoice(rng)
         img = degrade(render(inv, rng), rng)

@@ -124,11 +124,11 @@ def main() -> None:
                        "amount": claim["amount"] or invoice.total, "submitted_at": "2026-10-21",
                        "image": img, "invoice": invoice.model_dump()})
         golden.append({"claim_id": cid, "decision": decision, "policy_refs": [f"expense_policy#{r}" for r in refs]})
-    with (OUT / "claims.jsonl").open("w") as f:
+    with (OUT / "claims.jsonl").open("w", encoding="utf-8") as f:
         for c in claims:
             f.write(json.dumps(c, ensure_ascii=False) + "\n")
-    (OUT / "ledger_seed.json").write_text(json.dumps(LEDGER, ensure_ascii=False, indent=2))
-    with (ROOT / "evals" / "claims_golden.jsonl").open("w") as f:
+    (OUT / "ledger_seed.json").write_text(json.dumps(LEDGER, ensure_ascii=False, indent=2), encoding="utf-8")
+    with (ROOT / "evals" / "claims_golden.jsonl").open("w", encoding="utf-8") as f:
         for g in golden:
             f.write(json.dumps(g, ensure_ascii=False) + "\n")
     print(f"{len(claims)} claims written to {OUT}")

@@ -49,7 +49,7 @@ async def run_level(ex: Extractor, rows: list[dict], data_dir: Path, concurrency
 
 async def main_async(a) -> None:
     data_dir = Path(a.data)
-    rows = [json.loads(line) for line in (data_dir / f"{a.split}.jsonl").read_text().splitlines() if line][: a.n]
+    rows = [json.loads(line) for line in (data_dir / f"{a.split}.jsonl").read_text(encoding="utf-8").splitlines() if line][: a.n]
     ex = Extractor(a.model, a.base_url, a.api_key, guided=not a.no_guided)
     await ex.extract(data_dir / rows[0]["image"])  # warm-up
     report = [await run_level(ex, rows, data_dir, c) for c in a.concurrency]
@@ -59,7 +59,7 @@ async def main_async(a) -> None:
         print(f"| {r['concurrency']} | {r['p50_ms']} | {r['p95_ms']} | {r['throughput_img_s']} | {r['output_tok_s']} "
               f"| {r['errors']} | {r['invalid_json']} | {r['doc_exact_match']} |")
     Path(a.out).parent.mkdir(parents=True, exist_ok=True)
-    Path(a.out).write_text(json.dumps({"model": a.model, "levels": report}, indent=2))
+    Path(a.out).write_text(json.dumps({"model": a.model, "levels": report}, indent=2), encoding="utf-8")
 
 
 def main() -> None:

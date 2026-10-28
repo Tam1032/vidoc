@@ -50,7 +50,8 @@ class OpenAICompatLLM:
         self.name = model
         self.temperature = temperature
         # The SDK retries 408/409/429/5xx and connection errors with exponential backoff.
-        self.client = AsyncOpenAI(base_url=base_url, api_key=api_key or "not-needed",
+        # base_url "" (an unset CI variable) means the default endpoint, not a relative URL.
+        self.client = AsyncOpenAI(base_url=base_url or None, api_key=api_key or "not-needed",
                                   max_retries=max_retries, timeout=timeout, http_client=http_client)
 
     @classmethod

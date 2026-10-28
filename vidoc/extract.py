@@ -71,7 +71,7 @@ class Extractor:
         self.model = model
         self.guided = guided
         self.max_tokens = max_tokens
-        self.client = AsyncOpenAI(base_url=base_url, api_key=api_key or "not-needed", max_retries=3,
+        self.client = AsyncOpenAI(base_url=base_url or None, api_key=api_key or "not-needed", max_retries=3,
                                   timeout=120, http_client=http_client)
 
     @classmethod

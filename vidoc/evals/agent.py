@@ -95,7 +95,7 @@ def make_llm(spec: str) -> LLM:
 
 async def main_async(a) -> int:
     llm = make_llm(a.model)
-    cases = [json.loads(l) for l in Path(a.golden).read_text().splitlines() if l.strip()]
+    cases = [json.loads(l) for l in Path(a.golden).read_text(encoding="utf-8").splitlines() if l.strip()]
     if a.limit:
         cases = cases[: a.limit]
     reader = oracle_reader
@@ -112,7 +112,7 @@ async def main_async(a) -> int:
 
     rows = await asyncio.gather(*(one(c) for c in cases))
     summary = summarize(rows)
-    th = json.loads(Path(a.thresholds).read_text())
+    th = json.loads(Path(a.thresholds).read_text(encoding="utf-8"))
     fails = gate(summary, th.get(llm.name, th["default"]))
 
     out = Path(a.out)
@@ -120,8 +120,8 @@ async def main_async(a) -> int:
     slug = re.sub(r"[^\w.-]", "_", f"{llm.name}_{a.extraction}")
     (out / f"agent_{slug}.json").write_text(json.dumps(
         {"model": llm.name, "extraction": a.extraction, "summary": summary, "failures": fails,
-         "cases": [{k: v for k, v in r.items() if k != "trace"} for r in rows]}, ensure_ascii=False, indent=2))
-    with (out / f"agent_traces_{slug}.jsonl").open("w") as f:
+         "cases": [{k: v for k, v in r.items() if k != "trace"} for r in rows]}, ensure_ascii=False, indent=2), encoding="utf-8")
+    with (out / f"agent_traces_{slug}.jsonl").open("w", encoding="utf-8") as f:
         for r in rows:
             for e in r["trace"]:
                 f.write(json.dumps(e, ensure_ascii=False, default=str) + "\n")
@@ -133,9 +133,9 @@ async def main_async(a) -> int:
         lines += ["", "Wrong decisions:"] + [f"- {r['claim_id']}: expected {r['expected']}, executed {r['executed']}, "
                                              f"cited {r['cited']}" for r in wrong]
     md = "\n".join(lines) + "\n"
-    (out / f"agent_{slug}.md").write_text(md)
+    (out / f"agent_{slug}.md").write_text(md, encoding="utf-8")
     if os.getenv("GITHUB_STEP_SUMMARY"):
-        with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
+        with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as f:
             f.write(md)
     print(md)
     return 1 if fails else 0

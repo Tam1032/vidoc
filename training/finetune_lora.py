@@ -24,7 +24,7 @@ LM_TARGETS = r"^(?!.*visual).*\.(q_proj|k_proj|v_proj|o_proj|gate_proj|up_proj|d
 
 
 def load_split(data_dir: Path, split: str, limit: int = 0) -> list[dict]:
-    rows = [json.loads(line) for line in (data_dir / f"{split}.jsonl").read_text().splitlines() if line]
+    rows = [json.loads(line) for line in (data_dir / f"{split}.jsonl").read_text(encoding="utf-8").splitlines() if line]
     return rows[:limit] if limit else rows
 
 

@@ -11,7 +11,7 @@ def test_chunks_are_numbered_rules():
 
 
 def test_bm25_recall_floor():
-    rows = [json.loads(l) for l in GOLDEN.read_text().splitlines() if l]
+    rows = [json.loads(l) for l in GOLDEN.read_text(encoding="utf-8").splitlines() if l]
     res = evaluate(Retriever.from_dir(), rows, "bm25")
     assert res["recall@3"] >= 0.85
 

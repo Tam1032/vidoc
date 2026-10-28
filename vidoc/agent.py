@@ -19,11 +19,15 @@ For the claim you are given:
 2. find_duplicate.
 3. search_policy for each rule that could apply: document validity (buyer name and tax code,
    receipts vs VAT invoices, required fields), the limit for this expense category, deadlines,
-   the claimed amount vs the invoice total, approval thresholds. Read the sections before deciding.
+   the claimed amount vs the invoice total, approval thresholds. Always search the limit section
+   for the claim's category by name (e.g. "thiết bị", "văn phòng phẩm") and the deadline section.
+   Read the sections before deciding.
 4. Decide, citing section ids such as expense_policy#2.3:
    - reject: an invalid document under 1.1 / 1.2, a duplicate under 3.2, or a non-reimbursable expense
+     (spirits under 2.1, equipment from 10,000,000 VND under 2.6)
    - escalate: anything a person must judge (over a category limit, arithmetic problems,
-     missing invoice fields, late submission, amount above invoice total, needed sign-off, missing guest name)
+     missing invoice fields, days_from_invoice_to_submission above 30 (3.1), amount above invoice total,
+     needed sign-off such as equipment under 10,000,000 VND (2.6), missing guest name)
    - approve: only when every applicable rule is satisfied (policy 4.2)
 5. Call exactly one of approve_expense, reject_claim, escalate_claim. Then call submit_decision.
 If approve_expense is refused, read the reason and escalate or reject instead.

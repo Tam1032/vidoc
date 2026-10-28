@@ -2,7 +2,8 @@
 
 Hard rules live here, not in the prompt: approve_expense refuses a claim whose
 invoice was not extracted, fails the arithmetic checks, is already paid, is
-claimed above the invoice total, or is above the auto-approval ceiling. The
+claimed above the invoice total, was submitted after the deadline, is for
+equipment (always needs a person), or is above the auto-approval ceiling. The
 model decides the judgement calls (category limits, document validity) from
 the policy it retrieves.
 
@@ -24,6 +25,7 @@ from vidoc.schema import Invoice, check, invoice_key
 from vidoc.store import ClaimStore
 
 AUTO_APPROVE_MAX = 20_000_000  # policy 4.1 / 4.2
+SUBMIT_DEADLINE_DAYS = 30  # policy 3.1
 
 READ_ONLY = ToolAnnotations(read_only_hint=True, open_world_hint=False)
 WRITES = ToolAnnotations(read_only_hint=False, destructive_hint=True, idempotent_hint=False)
@@ -113,6 +115,12 @@ def build_server(store: ClaimStore, reader: InvoiceReader = oracle_reader,
             raise ToolError("refused: invoice already paid (expense_policy#3.2)")
         if c["amount"] > inv.total:
             raise ToolError("refused: claimed amount is above the invoice total (expense_policy#3.3)")
+        days = (date.fromisoformat(c["submitted_at"]) - date.fromisoformat(inv.issue_date)).days
+        if days > SUBMIT_DEADLINE_DAYS:
+            raise ToolError(f"refused: submitted {days} days after the invoice date (expense_policy#3.1)")
+        if c["category"] == "equipment":
+            raise ToolError("refused: equipment is never auto-approved; reject from 10,000,000 VND, "
+                            "otherwise escalate for department head sign-off (expense_policy#2.6)")
         if c["amount"] > AUTO_APPROVE_MAX:
             raise ToolError("refused: above the auto-approval ceiling (expense_policy#4.1)")
         store.ledger.append({"invoice_key": key, "claim_id": claim_id, "amount": c["amount"], "paid_at": c["submitted_at"]})

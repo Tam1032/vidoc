@@ -74,7 +74,7 @@ async def main_async(a) -> None:
     from vidoc.extract import Extractor
 
     data_dir = Path(a.data)
-    rows = [json.loads(line) for line in (data_dir / f"{a.split}.jsonl").read_text().splitlines() if line][: a.n]
+    rows = [json.loads(line) for line in (data_dir / f"{a.split}.jsonl").read_text(encoding="utf-8").splitlines() if line][: a.n]
     ex = Extractor.from_env("VLM")
     sem = asyncio.Semaphore(a.concurrency)
 
@@ -89,7 +89,7 @@ async def main_async(a) -> None:
     print(json.dumps(report, indent=2, ensure_ascii=False))
     out = Path(a.out) / f"extraction_{re.sub(r'[^\w.-]', '_', ex.model)}.json"
     out.parent.mkdir(parents=True, exist_ok=True)
-    out.write_text(json.dumps(report, indent=2, ensure_ascii=False))
+    out.write_text(json.dumps(report, indent=2, ensure_ascii=False), encoding="utf-8")
 
 
 def main() -> None:
